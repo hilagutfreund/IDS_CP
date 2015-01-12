@@ -9,8 +9,17 @@ from PyQt4 import QtGui, QtCore
 isOn = False # Whether or not the system is monitoring the line
 urlList = [] # Urls to capture as they come across the line
 listContainer = QtGui.QFormLayout()
+percent = ""
 #--------------------------------
-
+def updatePercentBool():
+    #global updatePerBool = float(sum(urlList.flag)) / float(len(urlList)) * 100.0
+   # global percent 
+    count = 0
+    for i in range(len(urlList)):
+        if urlList[i].flag:
+            count += 1
+    updatePerBool = float(count)/ float(len(urlList)) * 100.0
+    percent.setText(str("%.2f" % updatePerBool) + "% flagged")
 
 class ListItem():
     url = ''
@@ -41,9 +50,6 @@ class List(QtGui.QWidget):
         layout = QtGui.QVBoxLayout(self)
         layout.addWidget(scroll)
 
-    def updateBox():
-        for i in range(val):
-            listContainer.addRow(u)
 
     @staticmethod
     def addLine(listItem):
@@ -54,6 +60,7 @@ class List(QtGui.QWidget):
         color = 'color: red' if listItem.flag else 'color: green'
         label.setStyleSheet(color)
         listContainer.addRow(label)
+        updatePercentBool()
 
 
 class MainWindow(QtGui.QWidget):
@@ -82,12 +89,7 @@ class MainWindow(QtGui.QWidget):
         self.button.clicked.connect(handleButton)
         #-------------------------------------
 
-
-
-
-       
-        percent = QtGui.QLabel('%' + ' flagged')
-
+        
         titleEdit = QtGui.QLineEdit()
         authorEdit = QtGui.QLineEdit()
 
@@ -96,7 +98,9 @@ class MainWindow(QtGui.QWidget):
 
         grid.addWidget(self.button, 1, 0)
         grid.addWidget(titleEdit, 1, 1)
-
+        
+        global percent
+        percent = QtGui.QLabel("0 % flagged")
         grid.addWidget(percent, 2, 0)
        
         grid.addWidget(listView, 3, 1, 5, 1)
@@ -108,10 +112,13 @@ class MainWindow(QtGui.QWidget):
         self.setWindowTitle('Sniffer Deluxe')
         self.show()
 
+
+
 def main():
     app = QtGui.QApplication(sys.argv)
     w = MainWindow()
     bringWindowToFront(w)
+
 
     sys.exit(app.exec_())
 
@@ -120,6 +127,9 @@ def bringWindowToFront(window):
     window.setWindowState(window.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
     # this will activate the window
     window.activateWindow()
+
+
+
 
 if __name__ == '__main__':
     main()
