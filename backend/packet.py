@@ -4,15 +4,23 @@ Packets class
 Flags are strings
 '''
 
+def trim(str, lst):
+	for l in lst:
+		n = len(l)
+		if str[0:n] == l:
+			str = str[n:]
+	return str
+
 class Packet:
 	#flagsList = ["malicious"]
 
-	def __init__(self, timestamp, src_ip, dest_ip, dest_name, port):
+	def __init__(self, timestamp, src_ip, dest_ip, dest_name, port, payload):
 		self.timestamp = timestamp
 		self.src_ip = src_ip
 		self.dest_ip = dest_ip
-		self.dest_name = dest_name
+		self.dest_name = trim(dest_name, ["http://", "https://", "ftp://"])
 		self.port = port
+		self.payload = payload
 		self.processed = False
 		self.flag = self.initFlags()
 		self.getDomain()
@@ -23,12 +31,12 @@ class Packet:
 		return False
 	
 	def getDomain(self):
-		dest = self.dest_name.rpartition('/')
-		if dest[1] == '/':
+		dest = self.dest_name.split('/',1)
+		if len(dest) > 1:
 			self.domain = dest[0]
-			self.file = dest[2]
+			self.file = dest[1]
 		else:
-			self.domain = dest[2]
+			self.domain = dest[0]
 			self.file = ""
 		
 	#def setFlag(self, f):
