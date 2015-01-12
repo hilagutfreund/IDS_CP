@@ -11,18 +11,20 @@ urlList = [] # Urls to capture as they come across the line
 listContainer = QtGui.QFormLayout()
 #--------------------------------
 
+
+class ListItem():
+    url = ''
+    flag = False
+    def __init__(self,url2,flag2):
+        self.url = url2
+        self.flag = flag2
+
 #-----------Test Data------------
 urlList.append(ListItem('test 1',True))
 urlList.append(ListItem('test 2',False))
 urlList.append(ListItem('test 3',False))
 #--------------------------------
 
-class ListItem():
-    url
-    flag
-    def __init__(self,url,flag):
-        self.url = url
-        self.flag = flag
 
 class List(QtGui.QWidget):
     def __init__(self, items):
