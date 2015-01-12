@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import sys
-# sys.path.append('../backend/testSniffer')
-# from testSniffer.py import StartSniffer
+import threading
+sys.path.append('../backend/')
 from testSniffer import StartSniffer, StopSniffer
 from PyQt4 import QtGui, QtCore
 
@@ -79,6 +79,9 @@ class MainWindow(QtGui.QWidget):
             # TODO: Call python backend here
             isOn = not isOn
             if isOn:
+                #th = threading.Thread(target=StartSniffer, args=snifferCallback)
+                #th.daemon = True
+                #th.start()
                 StartSniffer(snifferCallback)
                 print 'isOn'
             else:
@@ -116,7 +119,11 @@ class MainWindow(QtGui.QWidget):
 
 def snifferCallback(dest_ip_addr):
     print 'this is the mofoin dest ip: ' + dest_ip_addr
-    List.addLine(ListItem(dest_ip_addr,True))
+    next = dest_ip_addr.split(".")
+    bo = True
+    if int(next[0]) > 110:
+        bo = False
+    List.addLine(ListItem(dest_ip_addr,bo))
 
 
 def main():
