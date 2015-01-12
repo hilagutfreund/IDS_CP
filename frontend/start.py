@@ -31,16 +31,16 @@ class List(QtGui.QWidget):
         layout.addWidget(scroll)
 
     def updateBox():
-        # TODO:
-        print 'todo'
+        for i in range(val):
+            myform.addRow(u)
 
     def addLine(text):
         # TODO: Add lines of colored urls to the scroll view
         print 'addLine'
-        urlList.append('NEW LINEE')
+        urlList.append(text)
         combolist.append(QtGui.QComboBox())
-
         myform.addRow(urlList[-1],combolist[-1])
+        updateBox();
 
 
 class MainWindow(QtGui.QWidget):
@@ -49,12 +49,16 @@ class MainWindow(QtGui.QWidget):
         self.initUI()
 
     def initUI(self):
+
+        listView = List(20)
+
         #-----------On/Off button-------------
         def handleButton(self):
             global isOn #python 'gotcha'
             # TODO: Call python backend here
             isOn = not isOn
             if isOn:
+                listView.addLine("TESTTTt")
                 print 'isOn'
             else:
                 print 'isOff'
@@ -71,7 +75,6 @@ class MainWindow(QtGui.QWidget):
 
         titleEdit = QtGui.QLineEdit()
         authorEdit = QtGui.QLineEdit()
-        reviewEdit = List(20)
 
 
         grid = QtGui.QGridLayout()
@@ -84,7 +87,7 @@ class MainWindow(QtGui.QWidget):
         grid.addWidget(authorEdit, 2, 1)
 
         grid.addWidget(review, 3, 0)
-        grid.addWidget(reviewEdit, 3, 1, 5, 1)
+        grid.addWidget(listView, 3, 1, 5, 1)
 
         self.setLayout(grid)
 
