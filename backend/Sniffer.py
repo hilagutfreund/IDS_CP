@@ -6,6 +6,9 @@ import string
 import time
 import socket
 import struct
+import threading
+
+p = pcap.pcapObject()
 
 def callback(dest_ip_addr):
   return False # do stuff from ui, receives dest ip address only...for now
@@ -63,6 +66,34 @@ def print_packet(pktlen, data, timestamp):
     dumphex(decoded['data'])
     callback(decoded['destination_address'])
 
+
+def handleSniffing():
+  # try-except block to catch keyboard interrupt.  Failure to shut
+  # down cleanly can result in the interface not being taken out of promisc.
+  # mode
+  #p.setnonblock(1)
+  try:
+    while 1:
+      #print 'listening...'
+      p.dispatch(1, print_packet)
+
+    # specify 'None' to dump to dumpfile, assuming you have called
+    # the dump_open method
+    #  p.dispatch(0, None)
+
+    # the loop method is another way of doing things
+    #  p.loop(1, print_packet)
+
+    # as is the next() method
+    # p.next() returns a (pktlen, data, timestamp) tuple
+    #apply(print_packet,p.next())
+  except KeyboardInterrupt:
+    print '%s' % sys.exc_type
+    print 'shutting down'
+    print '%d packets received, %d packets dropped, %d packets dropped by interface' % p.stats()
+
+
+
 def StopSniffer():
   exit(0);
 
@@ -74,7 +105,6 @@ def StartSniffer(callbackFunc):
     global callback
     callback = callbackFunc
 
-  p = pcap.pcapObject()
   #dev = pcap.lookupdev()
   dev = 'en0'#sys.argv[1]
 
@@ -92,28 +122,12 @@ def StartSniffer(callbackFunc):
   else:
     p.setfilter(string.join(sys.argv[2:],' '), 0, 0)
 
-  # try-except block to catch keyboard interrupt.  Failure to shut
-  # down cleanly can result in the interface not being taken out of promisc.
-  # mode
-  #p.setnonblock(1)
-  try:
-    while 1:
-      p.dispatch(1, print_packet)
+  th = threading.Thread(target=handleSniffing)
+  th.daemon = True
+  th.start()
 
-    # specify 'None' to dump to dumpfile, assuming you have called
-    # the dump_open method
-    #  p.dispatch(0, None)
 
-    # the loop method is another way of doing things
-    #  p.loop(1, print_packet)
 
-    # as is the next() method
-    # p.next() returns a (pktlen, data, timestamp) tuple
-    #  apply(print_packet,p.next())
-  except KeyboardInterrupt:
-    print '%s' % sys.exc_type
-    print 'shutting down'
-    print '%d packets received, %d packets dropped, %d packets dropped by interface' % p.stats()
 
 
 if __name__=='__main__':

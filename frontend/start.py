@@ -4,8 +4,9 @@
 import sys
 import threading
 sys.path.append('../backend/')
-from testSniffer import StartSniffer, StopSniffer
+from Sniffer import StartSniffer, StopSniffer
 from PyQt4 import QtGui, QtCore
+
 
 #------------Globals-------------
 #bad practice
@@ -41,7 +42,7 @@ class List(QtGui.QWidget):
         QtGui.QWidget.__init__(self)
         mygroupbox = QtGui.QGroupBox()
         for i in range(len(items)):
-            listContainer.addRow(QtGui.QLabel(items[i].url))
+            listContainer.insertRow(0,QtGui.QLabel(items[i].url))
         mygroupbox.setLayout(listContainer)
 
         scroll = QtGui.QScrollArea()
@@ -52,17 +53,37 @@ class List(QtGui.QWidget):
         layout.addWidget(scroll)
 
 
-    @staticmethod
-    def addLine(listItem):
-        # TODO: Add lines of colored urls to the scroll view
-        print 'addLine'
-        urlList.append(listItem)
-        label = QtGui.QLabel(listItem.url)
-        color = 'color: red' if listItem.flag else 'color: green'
-        label.setStyleSheet(color)
-        listContainer.addRow(label)
-        updatePercentBool()
+  #  @staticmethod
+def AddLine(listItem):
+    # TODO: Add lines of colored urls to the scroll view
+    print 'addLine'
+    urlList.append(listItem)
+    label = QtGui.QLabel(listItem.url)
+    color = 'color: red' if listItem.flag else 'color: green'
+    label.setStyleSheet(color)
+    listContainer.insertRow(0,label)
+    updatePercentBool()
 
+
+def snifferCallback(dest_ip_addr):
+    print 'this is the mofoin dest ip: ' + dest_ip_addr
+    next = dest_ip_addr.split(".")
+    bo = True
+    if int(next[0]) > 110:
+        bo = False
+    AddLine(ListItem(dest_ip_addr,bo))
+
+
+class MyThread(QtCore.QThread):
+    updated = QtCore.pyqtSignal(str)
+    def run( self ):
+        # returns dest_ip_addr
+        global isOn #python 'gotcha'
+        isOn = not isOn
+        if isOn:
+            StartSniffer(self.updated.emit)
+        else:
+            StopSniffer()
 
 class MainWindow(QtGui.QWidget):
     global urlList
@@ -73,25 +94,12 @@ class MainWindow(QtGui.QWidget):
     def initUI(self):
         listView = List(urlList)
 
-        #-----------On/Off button-------------
-        def handleButton(self):
-            global isOn #python 'gotcha'
-            # TODO: Call python backend here
-            isOn = not isOn
-            if isOn:
-                #th = threading.Thread(target=StartSniffer, args=snifferCallback)
-                #th.daemon = True
-                #th.start()
-                StartSniffer(snifferCallback)
-                print 'isOn'
-            else:
-                StopSniffer()
-                print 'isOff'
+        self._thread = MyThread(self)
+        self._thread.updated.connect(snifferCallback)
 
         self.button = QtGui.QPushButton('On/Off', self)
-        self.button.clicked.connect(handleButton)
+        self.button.clicked.connect(self._thread.start)
         #-------------------------------------
-
 
         titleEdit = QtGui.QLineEdit()
         titleEdit.setPlaceholderText("Filter Search")
@@ -110,20 +118,10 @@ class MainWindow(QtGui.QWidget):
         grid.addWidget(listView, 3, 1, 5, 1)
 
         self.setLayout(grid)
-
         self.resize(800, 500)
         self.move(100, 100)
         self.setWindowTitle('Sniffer Deluxe')
         self.show()
-
-
-def snifferCallback(dest_ip_addr):
-    print 'this is the mofoin dest ip: ' + dest_ip_addr
-    next = dest_ip_addr.split(".")
-    bo = True
-    if int(next[0]) > 110:
-        bo = False
-    List.addLine(ListItem(dest_ip_addr,bo))
 
 
 def main():
