@@ -40,6 +40,13 @@ def getRatio(result):
     ratio = float(float(result['positives'])/float(result['total']))
     return ratio
 
+
+def VTDetectionRatio(url):
+    resUrlScan = scan_url(url)
+    resQueryScan = query_url(resUrlScan['scan_id'])
+    return getRatio(resQueryScan)
+
+'''
 resUrlScan = scan_url("http://antalya.ru/")
 resQueryScan = query_url(resUrlScan['scan_id'])
 print getRatio(resQueryScan)
@@ -48,3 +55,5 @@ if resQueryScan!=None:
      format_url_report(resQueryScan)
 else:
      print("There could be problem with the file.")
+     '''
+
