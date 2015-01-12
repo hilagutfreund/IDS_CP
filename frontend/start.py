@@ -12,18 +12,24 @@ listContainer = QtGui.QFormLayout()
 #--------------------------------
 
 #-----------Test Data------------
-urlList.append('test 1')
-urlList.append('test 2')
-urlList.append('test 3')
+urlList.append(ListItem('test 1',True))
+urlList.append(ListItem('test 2',False))
+urlList.append(ListItem('test 3',False))
 #--------------------------------
 
+class ListItem():
+    url
+    flag
+    def __init__(self,url,flag):
+        self.url = url
+        self.flag = flag
 
 class List(QtGui.QWidget):
     def __init__(self, items):
         QtGui.QWidget.__init__(self)
         mygroupbox = QtGui.QGroupBox()
         for i in range(len(items)):
-            listContainer.addRow(QtGui.QLabel(items[i]))
+            listContainer.addRow(QtGui.QLabel(items[i].url))
         mygroupbox.setLayout(listContainer)
 
         scroll = QtGui.QScrollArea()
@@ -38,14 +44,13 @@ class List(QtGui.QWidget):
             listContainer.addRow(u)
 
     @staticmethod
-    def addLine(text, flag):
+    def addLine(listItem):
         # TODO: Add lines of colored urls to the scroll view
         print 'addLine'
-        urlList.append(text)
-        label = QtGui.QLabel(urlList[-1])
-        if flag:
-            color = 'color: red' if flag else 'color: green'
-            label.setStyleSheet(color)
+        urlList.append(listItem)
+        label = QtGui.QLabel(listItem.url)
+        color = 'color: red' if listItem.flag else 'color: green'
+        label.setStyleSheet(color)
         listContainer.addRow(label)
 
 
@@ -69,7 +74,7 @@ class MainWindow(QtGui.QWidget):
             else:
                 print 'isOff'
 
-            listView.addLine("TESTTTt",isOn)
+            listView.addLine(ListItem("TESTTTt",isOn))
 
         self.button = QtGui.QPushButton('On/Off', self)
         self.button.clicked.connect(handleButton)
