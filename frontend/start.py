@@ -31,7 +31,8 @@ class List(QtGui.QWidget):
         layout.addWidget(scroll)
 
     def updateBox():
-
+        # TODO:
+        print 'todo'
 
     def addLine(text):
         # TODO: Add lines of colored urls to the scroll view
@@ -51,10 +52,12 @@ class MainWindow(QtGui.QWidget):
         #-----------On/Off button-------------
         def handleButton(self):
             global isOn #python 'gotcha'
-            isOn = not isOn
-            text = 'isOn' if isOn else 'isOff'
-            print text
             # TODO: Call python backend here
+            isOn = not isOn
+            if isOn:
+                print 'isOn'
+            else:
+                print 'isOff'
 
         self.button = QtGui.QPushButton('On/Off', self)
         self.button.clicked.connect(handleButton)
