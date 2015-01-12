@@ -8,21 +8,24 @@ from PyQt4 import QtGui, QtCore
 #bad practice
 isOn = False # Whether or not the system is monitoring the line
 urlList = [] # Urls to capture as they come across the line
+listContainer = QtGui.QFormLayout()
+#--------------------------------
+
+#-----------Test Data------------
+urlList.append('test 1')
+urlList.append('test 2')
+urlList.append('test 3')
 #--------------------------------
 
 
 class List(QtGui.QWidget):
-    def __init__(self, val):
-        global urlList
+    def __init__(self, items):
         QtGui.QWidget.__init__(self)
-        mygroupbox = QtGui.QGroupBox('this is my groupbox')
-        myform = QtGui.QFormLayout()
-        combolist = []
-        for i in range(val):
-            urlList.append(QtGui.QLabel('mylabel'))
-            combolist.append(QtGui.QComboBox())
-            myform.addRow(urlList[i],combolist[i])
-        mygroupbox.setLayout(myform)
+        mygroupbox = QtGui.QGroupBox()
+        for i in range(len(items)):
+            listContainer.addRow(QtGui.QLabel(items[i]))
+        mygroupbox.setLayout(listContainer)
+
         scroll = QtGui.QScrollArea()
         scroll.setWidget(mygroupbox)
         scroll.setWidgetResizable(True)
@@ -32,25 +35,29 @@ class List(QtGui.QWidget):
 
     def updateBox():
         for i in range(val):
-            myform.addRow(u)
+            listContainer.addRow(u)
 
-    def addLine(text):
+    @staticmethod
+    def addLine(text, flag):
         # TODO: Add lines of colored urls to the scroll view
         print 'addLine'
         urlList.append(text)
-        combolist.append(QtGui.QComboBox())
-        myform.addRow(urlList[-1],combolist[-1])
-        updateBox();
+        label = QtGui.QLabel(urlList[-1])
+        if flag:
+            color = 'color: red' if flag else 'color: green'
+            label.setStyleSheet(color)
+        listContainer.addRow(label)
 
 
 class MainWindow(QtGui.QWidget):
+    global urlList
     def __init__(self):
         super(MainWindow, self).__init__()
         self.initUI()
 
     def initUI(self):
 
-        listView = List(20)
+        listView = List(urlList)
 
         #-----------On/Off button-------------
         def handleButton(self):
@@ -58,10 +65,11 @@ class MainWindow(QtGui.QWidget):
             # TODO: Call python backend here
             isOn = not isOn
             if isOn:
-                listView.addLine("TESTTTt")
                 print 'isOn'
             else:
                 print 'isOff'
+
+            listView.addLine("TESTTTt",isOn)
 
         self.button = QtGui.QPushButton('On/Off', self)
         self.button.clicked.connect(handleButton)
