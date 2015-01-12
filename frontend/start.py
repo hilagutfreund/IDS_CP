@@ -12,8 +12,6 @@ listContainer = QtGui.QFormLayout()
 percent = ""
 #--------------------------------
 def updatePercentBool():
-    #global updatePerBool = float(sum(urlList.flag)) / float(len(urlList)) * 100.0
-   # global percent 
     count = 0
     for i in range(len(urlList)):
         if urlList[i].flag:
