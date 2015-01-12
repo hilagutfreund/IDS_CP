@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import sys
+# sys.path.append('../backend/testSniffer')
+# from testSniffer.py import StartSniffer
+from testSniffer import StartSniffer, StopSniffer
 from PyQt4 import QtGui, QtCore
 
 #------------Globals-------------
@@ -68,7 +71,6 @@ class MainWindow(QtGui.QWidget):
         self.initUI()
 
     def initUI(self):
-
         listView = List(urlList)
 
         #-----------On/Off button-------------
@@ -77,31 +79,31 @@ class MainWindow(QtGui.QWidget):
             # TODO: Call python backend here
             isOn = not isOn
             if isOn:
+                StartSniffer(snifferCallback)
                 print 'isOn'
             else:
+                StopSniffer()
                 print 'isOff'
-
-            listView.addLine(ListItem("TESTTTt",isOn))
 
         self.button = QtGui.QPushButton('On/Off', self)
         self.button.clicked.connect(handleButton)
         #-------------------------------------
 
-        
+
         titleEdit = QtGui.QLineEdit()
         titleEdit.setPlaceholderText("Filter Search")
-        self.setFocus() 
+        self.setFocus()
 
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
 
         grid.addWidget(self.button, 1, 0)
         grid.addWidget(titleEdit, 1, 1)
-        
+
         global percent
         percent = QtGui.QLabel("0 % flagged")
         grid.addWidget(percent, 2, 0)
-       
+
         grid.addWidget(listView, 3, 1, 5, 1)
 
         self.setLayout(grid)
@@ -112,12 +114,15 @@ class MainWindow(QtGui.QWidget):
         self.show()
 
 
+def snifferCallback(dest_ip_addr):
+    print 'this is the mofoin dest ip: ' + dest_ip_addr
+    List.addLine(ListItem(dest_ip_addr,True))
+
 
 def main():
     app = QtGui.QApplication(sys.argv)
     w = MainWindow()
     bringWindowToFront(w)
-
 
     sys.exit(app.exec_())
 
