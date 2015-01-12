@@ -70,12 +70,11 @@ class MainWindow(QtGui.QWidget):
 
 
 
-        author = QtGui.QLabel('Author')
-        review = QtGui.QLabel('Review')
+       
+        percent = QtGui.QLabel('%' + ' flagged')
 
         titleEdit = QtGui.QLineEdit()
         authorEdit = QtGui.QLineEdit()
-
 
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
@@ -83,10 +82,8 @@ class MainWindow(QtGui.QWidget):
         grid.addWidget(self.button, 1, 0)
         grid.addWidget(titleEdit, 1, 1)
 
-        grid.addWidget(author, 2, 0)
-        grid.addWidget(authorEdit, 2, 1)
-
-        grid.addWidget(review, 3, 0)
+        grid.addWidget(percent, 2, 0)
+       
         grid.addWidget(listView, 3, 1, 5, 1)
 
         self.setLayout(grid)
@@ -108,7 +105,6 @@ def bringWindowToFront(window):
     window.setWindowState(window.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
     # this will activate the window
     window.activateWindow()
-
 
 if __name__ == '__main__':
     main()
