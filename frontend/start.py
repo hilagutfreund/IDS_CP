@@ -89,7 +89,8 @@ class MainWindow(QtGui.QWidget):
 
         
         titleEdit = QtGui.QLineEdit()
-        authorEdit = QtGui.QLineEdit()
+        titleEdit.setPlaceholderText("Filter Search")
+        self.setFocus() 
 
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
